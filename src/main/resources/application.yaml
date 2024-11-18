@@ -1,0 +1,27 @@
+server:
+  port: 8855
+spring:
+  datasource:
+    url: jdbc:h2:file:./blog_app;AUTO_SERVER=TRUE;DB_CLOSE_DELAY=-1  # Use file-based database instead of in-memory
+    username:
+    password:
+    driver-class-name: org.h2.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update  # Use 'update' to ensure the schema is updated without dropping tables
+    show-sql: true
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect  # Change dialect for H2 database
+        format_sql: true  # For better readability of SQL queries in logs
+  servlet:
+    multipart:
+      max-file-size: 10MB  # Set maximum file upload size
+  server:
+    error:
+      include-message: always  # Include error messages in the response
+
+h2:
+  console:
+    enabled: true  # Enable H2 console for database inspection
+    path: /h2-console  # The path to access H2 console via browser
