@@ -1,5 +1,6 @@
 package com.demo.blog.security;
 
+<<<<<<< HEAD
 import com.demo.blog.users.UserEntity;
 import com.demo.blog.users.UsersService;
 import jakarta.servlet.FilterChain;
@@ -69,5 +70,20 @@ public class JWTAuthenticationFilter extends OncePerRequestFilter {
 
         // Proceed with the filter chain
         filterChain.doFilter(request, response);
+=======
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.AuthenticationFilter;
+import org.springframework.stereotype.Component;
+
+@Component
+public class JWTAuthenticationFilter extends AuthenticationFilter {
+    private JWTAuthenticationManager jwtAuthenticationManager;
+
+    public JWTAuthenticationFilter(JWTAuthenticationManager jwtAuthenticationManager) {
+        super(jwtAuthenticationManager, new JWTAuthenticationConverter());
+        this.setSuccessHandler(((request, response, authentication) -> {
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+        }));
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
     }
 }

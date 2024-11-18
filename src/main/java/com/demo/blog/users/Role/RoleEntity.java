@@ -1,5 +1,6 @@
 package com.demo.blog.users.Role;
 
+<<<<<<< HEAD
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,4 +19,7 @@ public class RoleEntity {
     private Long id;
 
     private String role;
+=======
+public class RoleEntity {
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
 }

@@ -2,14 +2,20 @@ package com.demo.blog.users;
 
 import com.demo.blog.conmon.dtos.ErrorResponseDTO;
 import com.demo.blog.security.JWTService;
+<<<<<<< HEAD
 import com.demo.blog.users.Role.RoleEntity;
+=======
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
 import com.demo.blog.users.dtos.CreateUserRequestDTO;
 import com.demo.blog.users.dtos.LoginUserRequestDTO;
 import com.demo.blog.users.dtos.UserResponseDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+<<<<<<< HEAD
 import org.springframework.security.access.prepost.PreAuthorize;
+=======
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
 import org.springframework.web.bind.annotation.*;
 
 import java.net.URI;
@@ -28,6 +34,7 @@ public class UsersController {
         this.usersService = usersService;
     }
 
+<<<<<<< HEAD
     @PreAuthorize("hasRole('Admin')")
     @PostMapping("/role")
     ResponseEntity<RoleEntity> createRole(@RequestParam(name = "role") String role){
@@ -56,6 +63,11 @@ public class UsersController {
     @PostMapping("")
     ResponseEntity<UserResponseDTO> signupUser(@RequestBody CreateUserRequestDTO request){
         UserEntity savedUser = usersService.createUser(request, 2L);
+=======
+    @PostMapping("")
+    ResponseEntity<UserResponseDTO> signupUser(@RequestBody CreateUserRequestDTO request){
+        UserEntity savedUser = usersService.createUser(request);
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
         URI savedUserUri = URI.create("/users/" + savedUser.getId());
         var userResponse = modelMapper.map(savedUser, UserResponseDTO.class);
         userResponse.setToken(jwtService.createJWT(savedUser.getId()));

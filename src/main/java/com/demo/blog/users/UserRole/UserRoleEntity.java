@@ -1,5 +1,6 @@
 package com.demo.blog.users.UserRole;
 
+<<<<<<< HEAD
 import com.demo.blog.users.Role.RoleEntity;
 import com.demo.blog.users.UserEntity;
 import jakarta.persistence.*;
@@ -30,4 +31,7 @@ public class UserRoleEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "role_id", nullable = false)
     private RoleEntity role;
+=======
+public class UserRoleEntity {
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
 }

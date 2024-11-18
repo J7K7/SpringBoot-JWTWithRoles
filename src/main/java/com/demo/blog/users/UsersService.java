@@ -1,5 +1,6 @@
 package com.demo.blog.users;
 
+<<<<<<< HEAD
 import com.demo.blog.users.Role.RoleEntity;
 import com.demo.blog.users.Role.RoleRepository;
 import com.demo.blog.users.UserRole.UserRoleEntity;
@@ -37,10 +38,27 @@ public class UsersService implements UserDetailsService {
         this.usersRepository = usersRepository;
         this.roleRepository = roleRepository;
         this.userRoleRepository = userRoleRepository;
+=======
+import com.demo.blog.users.dtos.CreateUserRequestDTO;
+import org.modelmapper.ModelMapper;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
+@Service
+public class UsersService {
+    private final UsersRepository usersRepository;
+    private final ModelMapper modelMapper;
+    private final PasswordEncoder passwordEncoder;
+
+
+    public UsersService(UsersRepository usersRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+        this.usersRepository = usersRepository;
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
     }
 
+<<<<<<< HEAD
     //Role API's
 
     public RoleEntity createRole(String role){
@@ -64,6 +82,12 @@ public class UsersService implements UserDetailsService {
         role = roleRepository.save(role);
         createUserRole(savedUser, role);
         return savedUser;
+=======
+    public UserEntity createUser(CreateUserRequestDTO u){
+        UserEntity newUser = modelMapper.map(u, UserEntity.class);
+        newUser.setPassword(passwordEncoder.encode(u.getPassword()));
+        return usersRepository.save(newUser);
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
     }
 
     public UserEntity getUser(String username){
@@ -78,6 +102,7 @@ public class UsersService implements UserDetailsService {
         var user = getUser(username);
         var passMatch = passwordEncoder.matches(password, user.getPassword());
         if(!passMatch) throw new InvalidCredentialException();
+<<<<<<< HEAD
 //        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
         return user;
    }
@@ -124,6 +149,11 @@ public class UsersService implements UserDetailsService {
     }
 
     //Excpetions
+=======
+        return user;
+   }
+
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
     public static class UserNotFoundException extends IllegalArgumentException{
 
         public UserNotFoundException(String username){
@@ -140,10 +170,13 @@ public class UsersService implements UserDetailsService {
             super("Invalid username or password combination!");
         }
     }
+<<<<<<< HEAD
 
     public static class RoleNotFoundException extends IllegalArgumentException{
         public RoleNotFoundException(){
             super("Role Not Found!");
         }
     }
+=======
+>>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
 }
