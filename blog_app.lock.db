@@ -1,14 +1,6 @@
 #FileLock
-<<<<<<< HEAD
-#Mon Nov 18 17:36:51 IST 2024
+#Thu Nov 21 18:04:09 IST 2024
 hostName=DESKTOP-MVAK0A0
-id=1933f2b1a0a40a42cecdc5778e31858ae08fec4f7b4
+id=1934eb72abf94ba9516cc8194c4909e50551717f46a
 method=file
-server=192.168.1.100\:63794
-=======
-#Wed Nov 13 15:37:13 IST 2024
-hostName=LAPTOP-UKMLO24D
-id=19324fdba098d7236c250b4000b0ed0161d7cd5b6e5
-method=file
-server=192.168.2.1\:59722
->>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
+server=192.168.1.101\:58366

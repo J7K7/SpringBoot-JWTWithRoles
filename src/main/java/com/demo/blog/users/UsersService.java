@@ -1,6 +1,6 @@
 package com.demo.blog.users;
 
-<<<<<<< HEAD
+import com.demo.blog.exception.GlobalExceptionHandler;
 import com.demo.blog.users.Role.RoleEntity;
 import com.demo.blog.users.Role.RoleRepository;
 import com.demo.blog.users.UserRole.UserRoleEntity;
@@ -8,6 +8,10 @@ import com.demo.blog.users.UserRole.UserRoleRepository;
 import com.demo.blog.users.dtos.CreateUserRequestDTO;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.GrantedAuthority;
@@ -27,38 +31,25 @@ import java.util.Set;
 import java.util.Collection;
 
 @Service
-public class UsersService implements UserDetailsService {
+public class UsersService {
     private final UsersRepository usersRepository;
     private final RoleRepository roleRepository;
     private final UserRoleRepository userRoleRepository;
     private final ModelMapper modelMapper;
     private final PasswordEncoder passwordEncoder;
+    private final JavaMailSender mailSender;
+    @Value("${spring.mail.username}") String sender;
 
-    public UsersService(UsersRepository usersRepository, RoleRepository roleRepository, UserRoleRepository userRoleRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
+    public UsersService(UsersRepository usersRepository, RoleRepository roleRepository, UserRoleRepository userRoleRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder, JavaMailSender mailSender) {
         this.usersRepository = usersRepository;
         this.roleRepository = roleRepository;
         this.userRoleRepository = userRoleRepository;
-=======
-import com.demo.blog.users.dtos.CreateUserRequestDTO;
-import org.modelmapper.ModelMapper;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
-
-@Service
-public class UsersService {
-    private final UsersRepository usersRepository;
-    private final ModelMapper modelMapper;
-    private final PasswordEncoder passwordEncoder;
-
-
-    public UsersService(UsersRepository usersRepository, ModelMapper modelMapper, PasswordEncoder passwordEncoder) {
-        this.usersRepository = usersRepository;
->>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
         this.modelMapper = modelMapper;
         this.passwordEncoder = passwordEncoder;
+        this.mailSender = mailSender;
     }
 
-<<<<<<< HEAD
+
     //Role API's
 
     public RoleEntity createRole(String role){
@@ -68,7 +59,12 @@ public class UsersService {
     }
 
     public RoleEntity getRole(Long id){
-        var savedRole = roleRepository.findById(id).orElseThrow(() -> new RoleNotFoundException());
+        var savedRole = roleRepository.findById(id).orElseThrow(() -> new GlobalExceptionHandler.RoleNotFoundException());
+        return savedRole;
+    }
+
+    public RoleEntity getRole(String role){
+        var savedRole = roleRepository.findByRole(role).orElseThrow(() -> new GlobalExceptionHandler.RoleNotFoundException());
         return savedRole;
     }
 
@@ -82,46 +78,24 @@ public class UsersService {
         role = roleRepository.save(role);
         createUserRole(savedUser, role);
         return savedUser;
-=======
-    public UserEntity createUser(CreateUserRequestDTO u){
-        UserEntity newUser = modelMapper.map(u, UserEntity.class);
-        newUser.setPassword(passwordEncoder.encode(u.getPassword()));
-        return usersRepository.save(newUser);
->>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
     }
 
     public UserEntity getUser(String username){
-        return usersRepository.findByUsername(username).orElseThrow(() -> new UserNotFoundException(username));
+        return usersRepository.findByUsername(username).orElseThrow(() -> new GlobalExceptionHandler.UserNotFoundException(username));
     }
 
     public UserEntity getUser(Long id){
-        return usersRepository.findById(id).orElseThrow(() -> new UserNotFoundException(id));
+        return usersRepository.findById(id).orElseThrow(() -> new GlobalExceptionHandler.UserNotFoundException(id));
     }
 
    public UserEntity loginUser(String username, String password){
         var user = getUser(username);
         var passMatch = passwordEncoder.matches(password, user.getPassword());
-        if(!passMatch) throw new InvalidCredentialException();
-<<<<<<< HEAD
-//        authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(username, password));
-        return user;
+        if(!passMatch) throw new GlobalExceptionHandler.InvalidCredentialException();
+       return user;
    }
 
-    @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserEntity user = usersRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(username));
-        return new org.springframework.security.core.userdetails.User(
-                user.getUsername(),
-                user.getPassword(),
-                true,
-                true,
-                true,
-                true,
-                getAuthorities(user.getId())
-        );
-    }
-
-    public Collection<? extends GrantedAuthority> getAuthorities(Long id) {
+    public List<String> getAuthorities(Long id) {
 
         List<UserRoleEntity> userRoles = userRoleRepository.findAll();
 
@@ -134,8 +108,39 @@ public class UsersService {
         }
 
         return roles.stream()
-                .map(role -> new SimpleGrantedAuthority(getRole(role.getRole().getId()).getRole()))
+                .map(role -> getRole(role.getRole().getId()).getRole())
                 .collect(Collectors.toList());
+    }
+
+    public UserEntity getUserByEmail(String email){
+        return usersRepository.findByEmail(email).orElseThrow(() -> new GlobalExceptionHandler.EmailNotFound());
+    }
+
+    public boolean sendMail(String to, String subject, String body){
+        try{
+
+            SimpleMailMessage message = new SimpleMailMessage();
+            message.setFrom(sender);
+            message.setTo(to);
+            message.setSubject(subject);
+            message.setText(body);
+
+            mailSender.send(message);
+        } catch (Exception ex){
+            return false;
+        }
+        return true;
+    }
+
+    public boolean passwordChange(String email, String newPassword){
+        try{
+            UserEntity user = getUserByEmail(email);
+            user.setPassword(passwordEncoder.encode(newPassword));
+            usersRepository.save(user);
+        } catch (Exception e) {
+            return false;
+        }
+        return true;
     }
 
     //User-Role API's
@@ -146,37 +151,5 @@ public class UsersService {
         newUserRole.setRole(roleEntity);
         userRoleRepository.save(newUserRole);
         return "Role Updated !";
-    }
-
-    //Excpetions
-=======
-        return user;
    }
-
->>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
-    public static class UserNotFoundException extends IllegalArgumentException{
-
-        public UserNotFoundException(String username){
-            super("user with username: " + username + " not found!");
-        }
-
-        public UserNotFoundException(Long id){
-            super("user with userId: " + id + " not found!");
-        }
-    }
-
-    public static class InvalidCredentialException extends IllegalArgumentException{
-        public InvalidCredentialException(){
-            super("Invalid username or password combination!");
-        }
-    }
-<<<<<<< HEAD
-
-    public static class RoleNotFoundException extends IllegalArgumentException{
-        public RoleNotFoundException(){
-            super("Role Not Found!");
-        }
-    }
-=======
->>>>>>> 5f1df2d0576ba6683e8c0efc4dff5fb4abde8dbd
 }

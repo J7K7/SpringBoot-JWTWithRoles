@@ -20,6 +20,17 @@ spring:
   server:
     error:
       include-message: always  # Include error messages in the response
+  mail:
+    host: smtp.stpl.com
+    port: 587
+    username: jainish.vyas@stpl.com
+    password: Abc@12345
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
 
 h2:
   console:

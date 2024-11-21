@@ -1,4 +1,4 @@
-package com.demo.blog.conmon.dtos;
+package com.demo.blog.exception;
 
 import lombok.Builder;
 import lombok.Data;
