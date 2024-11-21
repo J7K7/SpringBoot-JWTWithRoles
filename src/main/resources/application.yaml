@@ -24,7 +24,7 @@ spring:
     host: smtp.stpl.com
     port: 587
     username: jainish.vyas@stpl.com
-    password: Abc@12345
+    password: 
     properties:
       mail:
         smtp:
